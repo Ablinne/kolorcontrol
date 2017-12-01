@@ -1,0 +1,5 @@
+dist
+build
+*_ui.py
+*.pyc
+*.egg-info
