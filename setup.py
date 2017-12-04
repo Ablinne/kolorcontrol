@@ -35,7 +35,7 @@ setup(
     author_email="alexander@blinne.net",
     url="https://github.com/Ablinne/kolorcontrol",
     python_requires=">= 3.4",
-    version="0.1",
+    version="0.2",
     packages=["kolorcontrol", "kolorcontrol.ui"],
     scripts=["scripts/kolorcontrol"],
     cmdclass=cmdclass,
