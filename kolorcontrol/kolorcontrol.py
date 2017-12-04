@@ -17,6 +17,8 @@
 import subprocess
 import math
 
+import numpy as np
+
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 #from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
@@ -33,10 +35,13 @@ def set_xcalib(rb,  rc,  rg,  gb,  gc,  gg,  bb,  bc,  bg):
     textcommands = []
 
     for command in commands:
-        subprocess.check_call(command)
         textcommands.append(" ".join(command))
+        command.insert(2, "-p")
+        output = subprocess.check_output(command)
 
-    return "\n".join(textcommands)
+    output = np.loadtxt(output.splitlines(), comments="W")
+
+    return "\n".join(textcommands), output
 
 def gammalog(gamma):
     return int(round(math.log(gamma, 10)*100))
@@ -75,6 +80,8 @@ class KCMainWindow(Ui_MainWindow):
         # a figure instance to plot on
         self.figure = Figure()
 
+        self.ax = self.figure.add_subplot(111)
+
         # it takes the `figure` instance as a parameter to __init__
         self.canvas = FigureCanvas(self.figure)
 
@@ -99,9 +106,17 @@ class KCMainWindow(Ui_MainWindow):
            self.spin_updater_enabled = True
        return f
 
+    def update_graph(self, data):
+        self.ax.clear()
+        self.ax.plot(data[:,0], color="red")
+        self.ax.plot(data[:,1], color="green")
+        self.ax.plot(data[:,2], color="blue")
+        self.canvas.draw()
+
     def do_xcalib(self):
-        textcommands = set_xcalib(self.spinR_B.value(),  self.spinR_C.value(),  self.spinR_G.value(),
+        textcommands, output = set_xcalib(self.spinR_B.value(),  self.spinR_C.value(),  self.spinR_G.value(),
         self.spinG_B.value(),  self.spinG_C.value(),  self.spinG_G.value(),
         self.spinB_B.value(),  self.spinB_C.value(),  self.spinB_G.value(),)
 
+        self.update_graph(output)
         self.textBrowser.setText(textcommands)
