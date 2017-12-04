@@ -79,38 +79,35 @@ class KCMainWindow(Ui_MainWindow):
 
         # a figure instance to plot on
         self.figure = Figure()
-
-        self.ax = self.figure.add_subplot(111)
+        self.ax = None
 
         # it takes the `figure` instance as a parameter to __init__
         self.canvas = FigureCanvas(self.figure)
-
-        # this is the Navigation widget
-        # it takes the Canvas widget and a parent
-        #self.toolbar = NavigationToolbar(self.canvas)
-        #self.plotLayout.addWidget(self.toolbar)
         self.plotLayout.addWidget(self.canvas)
 
     def _spin_gammaexp_updater(self,  spin):
        def f(gamma):
            if self.spin_updater_enabled:
-               print(gamma)
                spin.setValue(gammaexp(gamma))
        return f
 
     def _slider_gammalog_updater(self,  slider):
        def f(gamma):
-           print(gamma)
            self.spin_updater_enabled = False
            slider.setValue(gammalog(gamma))
            self.spin_updater_enabled = True
        return f
 
     def update_graph(self, data):
+        if not self.ax:
+            self.ax = self.figure.add_subplot(111)
         self.ax.clear()
-        self.ax.plot(data[:,0], color="red")
-        self.ax.plot(data[:,1], color="green")
-        self.ax.plot(data[:,2], color="blue")
+        self.ax.set_xlim(0,1)
+        self.ax.set_ylim(0,1)
+        self.figure.tight_layout()
+        self.ax.plot(np.linspace(0,1,256), data[:,0]/65279, color="red")
+        self.ax.plot(np.linspace(0,1,256), data[:,1]/65279, color="green")
+        self.ax.plot(np.linspace(0,1,256), data[:,2]/65279, color="blue")
         self.canvas.draw()
 
     def do_xcalib(self):
