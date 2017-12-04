@@ -420,9 +420,9 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>390</y>
+      <y>531</y>
       <width>401</width>
-      <height>192</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="readOnly">
@@ -434,6 +434,17 @@
     <property name="placeholderText">
      <string/>
     </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>370</y>
+      <width>401</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="plotLayout"/>
    </widget>
   </widget>
  </widget>

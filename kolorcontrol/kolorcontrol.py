@@ -17,6 +17,10 @@
 import subprocess
 import math
 
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+#from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
+
 from .ui.main_ui import Ui_MainWindow
 
 def set_xcalib(rb,  rc,  rg,  gb,  gc,  gg,  bb,  bc,  bg):
@@ -67,6 +71,18 @@ class KCMainWindow(Ui_MainWindow):
         self.spinB_B.valueChanged['int'].connect(self.do_xcalib)
         self.spinB_C.valueChanged['int'].connect(self.do_xcalib)
         self.spinB_G.valueChanged['double'].connect(self.do_xcalib)
+
+        # a figure instance to plot on
+        self.figure = Figure()
+
+        # it takes the `figure` instance as a parameter to __init__
+        self.canvas = FigureCanvas(self.figure)
+
+        # this is the Navigation widget
+        # it takes the Canvas widget and a parent
+        #self.toolbar = NavigationToolbar(self.canvas)
+        #self.plotLayout.addWidget(self.toolbar)
+        self.plotLayout.addWidget(self.canvas)
 
     def _spin_gammaexp_updater(self,  spin):
        def f(gamma):
