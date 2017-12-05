@@ -19,29 +19,37 @@ import math
 
 import numpy as np
 
+from PyQt5 import QtCore
+
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 #from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
 from .ui.main_ui import Ui_MainWindow
 
-def set_xcalib(rb,  rc,  rg,  gb,  gc,  gg,  bb,  bc,  bg):
-    commands = [["xcalib",  "-a",  "-c"],
-                ["xcalib",  "-a",  "-red",  str(rg),  str(rb),  str(rc),
-                                   "-green",  str(gg),  str(gb),  str(gc),
-                                   "-blue",  str(bg),  str(bb),  str(bc)]
-                ]
+def reset_xcalib(screennum):
+    command = ["xcalib",  "-a",  "-s", str(screennum), "-c"]
+    try:
+        subprocess.check_call(command)
+    except subprocess.CalledProcessError:
+        pass
+    return " ".join(command)
 
-    textcommands = []
-
-    for command in commands:
-        textcommands.append(" ".join(command))
-        command.insert(2, "-p")
+def set_xcalib(screennum, rb,  rc,  rg,  gb,  gc,  gg,  bb,  bc,  bg):
+    command = ["xcalib",  "-a",  "-s", str(screennum),
+                        "-red",  str(rg),  str(rb),  str(rc),
+                        "-green",  str(gg),  str(gb),  str(gc),
+                        "-blue",  str(bg),  str(bb),  str(bc)]
+    textcommand = " ".join(command)
+    command.insert(2, "-p")
+    try:
         output = subprocess.check_output(command)
-
+    except subprocess.CalledProcessError:
+        output = None
+    if output is None:
+        raise ValueError('Invalid Parameters')
     output = np.loadtxt(output.splitlines(), comments="W")
-
-    return "\n".join(textcommands), output
+    return textcommand, np.atleast_2d(output)
 
 def gammalog(gamma):
     return int(round(math.log(gamma, 10)*100))
@@ -53,6 +61,7 @@ class KCMainWindow(Ui_MainWindow):
     def __init__(self,  *args,  **kwargs):
         super().__init__(*args,  **kwargs)
         self.spin_updater_enabled = True
+        self.xcalib_enabled = True
 
     def setupUi(self,  MainWindow):
         super().setupUi(MainWindow)
@@ -83,7 +92,11 @@ class KCMainWindow(Ui_MainWindow):
 
         # it takes the `figure` instance as a parameter to __init__
         self.canvas = FigureCanvas(self.figure)
+
+        self.canvas.setMinimumSize(QtCore.QSize(200, 100))
         self.plotLayout.addWidget(self.canvas)
+
+        self.resetButton.clicked.connect(self.on_resetButton_clicked)
 
     def _spin_gammaexp_updater(self,  spin):
        def f(gamma):
@@ -114,9 +127,34 @@ class KCMainWindow(Ui_MainWindow):
         self.canvas.draw()
 
     def do_xcalib(self):
-        textcommands, output = set_xcalib(self.spinR_B.value(),  self.spinR_C.value(),  self.spinR_G.value(),
-        self.spinG_B.value(),  self.spinG_C.value(),  self.spinG_G.value(),
-        self.spinB_B.value(),  self.spinB_C.value(),  self.spinB_G.value(),)
+        if self.xcalib_enabled:
+            textcommands = []
+            textcommands.append(reset_xcalib(self.spinScreen.value()))
+            try:
+                c, output = set_xcalib(self.spinScreen.value(),
+                                                self.spinR_B.value(),  self.spinR_C.value(),  self.spinR_G.value(),
+                                                self.spinG_B.value(),  self.spinG_C.value(),  self.spinG_G.value(),
+                                                self.spinB_B.value(),  self.spinB_C.value(),  self.spinB_G.value(),)
 
-        self.update_graph(output)
-        self.textBrowser.setText(textcommands)
+                textcommands.append(c)
+                self.update_graph(output)
+                self.textBrowser.setText("\n".join(textcommands))
+            except ValueError:
+                pass
+
+    def on_resetButton_clicked(self):
+        self.xcalib_enabled = False
+        self.spinR_B.setValue(0)
+        self.spinG_B.setValue(0)
+        self.spinB_B.setValue(0)
+        self.spinR_C.setValue(100)
+        self.spinG_C.setValue(100)
+        self.spinB_C.setValue(100)
+        self.spinR_G.setValue(1.0)
+        self.spinG_G.setValue(1.0)
+        self.spinB_G.setValue(1.0)
+        self.xcalib_enabled = True
+        textcommand = reset_xcalib(self.spinScreen.value())
+        self.ax.clear()
+        self.canvas.draw()
+        self.textBrowser.setText(textcommand)
