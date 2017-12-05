@@ -105,9 +105,12 @@ class KCMainWindow(Ui_MainWindow):
         self.ax.set_xlim(0,1)
         self.ax.set_ylim(0,1)
         self.figure.tight_layout()
-        self.ax.plot(np.linspace(0,1,256), data[:,0]/65279, color="red")
-        self.ax.plot(np.linspace(0,1,256), data[:,1]/65279, color="green")
-        self.ax.plot(np.linspace(0,1,256), data[:,2]/65279, color="blue")
+        n, _ = data.shape
+        scale = math.floor(65535*(n-1)/n)
+        x = np.linspace(0,1,n)
+        self.ax.plot(x, data[:,0]/scale, color="red")
+        self.ax.plot(x, data[:,1]/scale, color="green")
+        self.ax.plot(x, data[:,2]/scale, color="blue")
         self.canvas.draw()
 
     def do_xcalib(self):
