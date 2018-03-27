@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from setuptools import setup
 
@@ -37,9 +37,10 @@ setup(
     author_email="alexander@blinne.net",
     url="https://github.com/Ablinne/kolorcontrol",
     python_requires=">= 3.4",
-    version="0.3",
+    setup_requires=['pyqt_distutils', 'pyqt5'],
+    install_requires=['matplotlib>=1.3', 'pyqt5'],
+    version="0.3.1",
     packages=["kolorcontrol", "kolorcontrol.ui"],
     scripts=["scripts/kolorcontrol"],
     cmdclass=cmdclass,
 )
-

@@ -11,16 +11,6 @@ To install this utility directly from github use
 pip3 install git@github.com:Ablinne/kolorcontrol.git
 ```
 
-However this requires you to have `pyqt_distutils` and `pyuic5` installed beforehand.
-If you do not wish to install these, you can download a tarball from
-<http://www.blinne.net/files/kolorcontrol/> and install KolorControl from that using
-
-```
-tar xfz KolorControl-*.tar.gz
-cd KolorControl-*
-python3 setup.py install
-```
-
 ## Usage
 
 Just run `kolorcontrol` and adjust your screen!
