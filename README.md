@@ -8,7 +8,7 @@ This little GUI tool is intended to set your screen brightness, contrast and gam
 To install this utility directly from github use
 
 ```
-pip3 install git@github.com:Ablinne/kolorcontrol.git
+pip3 install --user git+https://github.com/Ablinne/kolorcontrol.git
 ```
 
 ## Usage
