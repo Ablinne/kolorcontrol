@@ -38,7 +38,7 @@ setup(
     url="https://github.com/Ablinne/kolorcontrol",
     python_requires=">= 3.4",
     setup_requires=['pyqt_distutils', 'pyqt5'],
-    install_requires=['matplotlib>=1.3', 'pyqt5'],
+    install_requires=['matplotlib>=1.3', 'pyqt_distutils', 'pyqt5'],
     version="0.3.1",
     packages=["kolorcontrol", "kolorcontrol.ui"],
     scripts=["scripts/kolorcontrol"],
