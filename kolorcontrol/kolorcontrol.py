@@ -20,12 +20,13 @@ import math
 import numpy as np
 
 from PyQt5 import QtCore
+from PyQt5 import uic
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 #from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
-from .ui.main_ui import Ui_MainWindow
+Ui_MainWindow, QtBaseClass = uic.loadUiType("ui/main.ui")
 
 def reset_xcalib(screennum):
     command = ["xcalib",  "-a",  "-s", str(screennum), "-c"]
