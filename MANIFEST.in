@@ -1,3 +1,4 @@
 include README.md
 include LICENSE
 include pyuic.json
+include kolorcontrol/ui/main.ui

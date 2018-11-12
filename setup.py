@@ -43,4 +43,5 @@ setup(
     packages=["kolorcontrol", "kolorcontrol.ui"],
     scripts=["scripts/kolorcontrol"],
     cmdclass=cmdclass,
+    include_package_data=True
 )
