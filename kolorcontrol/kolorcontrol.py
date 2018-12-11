@@ -28,8 +28,10 @@ from matplotlib.figure import Figure
 try:
     from .ui.main_ui import Ui_MainWindow
 except ImportError:
+    from . import ui
     from PyQt5 import uic
-    Ui_MainWindow, QtBaseClass = uic.loadUiType("ui/main.ui")
+    import os.path as osp
+    Ui_MainWindow, QtBaseClass = uic.loadUiType(osp.join(ui.__path__[0], "main.ui"))
 
 def reset_xcalib(screennum):
     command = ["xcalib",  "-a",  "-s", str(screennum), "-c"]
